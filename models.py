@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, date
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -29,9 +29,10 @@ class User(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
-            "first_name": self.name,
+            "name": self.name,  # Fixed: was "first_name" but field is "name"
             "email": self.email,
-            }
+            "created_at": self.created_at.isoformat() if self.created_at else None,  # Added ISO format
+        }
 
 class Book(db.Model):
     __tablename__ = "books"
@@ -39,26 +40,28 @@ class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     author = db.Column(db.String, nullable=False)
-    published_year= db.Column(db.Date, nullable=True)
+    published_year = db.Column(db.Date, nullable=True)  # This is a Date object
     description = db.Column(db.Text)
     genre_id = db.Column(db.Integer, db.ForeignKey("genres.id"))
     last_updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    genre = db.relationship("Genre", back_populates= "books")
+    genre = db.relationship("Genre", back_populates="books")
     borrow_records = db.relationship(
         "BorrowRecord", back_populates="book", cascade="all, delete-orphan"
     )
     ratings = db.relationship(
         "Rating", back_populates="book", cascade="all, delete-orphan"
     )
+    
     def to_dict(self):
         return {
             "id": self.id,
             "title": self.title,
             "author": self.author,
-            "published_year": self.published_year,
+            "published_year": self.published_year.isoformat() if self.published_year else None,  # Fixed: convert to ISO string
             "description": self.description,
             "genre": self.genre.name if self.genre else None,
+            "last_updated": self.last_updated.isoformat() if self.last_updated else None,  # Added ISO format
         }
 
 class Genre(db.Model):
@@ -93,8 +96,9 @@ class BorrowRecord(db.Model):
             "id": self.id,
             "user_id": self.user_id,
             "book_id": self.book_id,
-            "borrow_date": self.borrow_date,
-            "return_date": self.return_date,
+            "borrow_date": self.borrow_date.isoformat() if self.borrow_date else None,
+            "due_date": self.due_date.isoformat() if self.due_date else None,  # Added due_date
+            "return_date": self.return_date.isoformat() if self.return_date else None,
         }
 
 class Rating(db.Model):
@@ -103,7 +107,7 @@ class Rating(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     book_id = db.Column(db.Integer, db.ForeignKey("books.id"))
-    rating = db.Column(db.Integer, nullable=False)
+    rating = db.Column(db.Integer, nullable=False)  # Fixed: field is "rating" not "score"
     review = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -115,7 +119,7 @@ class Rating(db.Model):
             "id": self.id,
             "user_id": self.user_id,
             "book_id": self.book_id,
-            "score": self.score,
+            "rating": self.rating,  # Fixed: was "score" but field is "rating"
             "review": self.review,
-            "created_at": self.created_at,
+            "created_at": self.created_at.isoformat() if self.created_at else None,  # Fixed: ISO format
         }
