@@ -3,7 +3,6 @@ from datetime import datetime
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
 db = SQLAlchemy()
 
 class User(db.Model):

@@ -11,8 +11,6 @@ db.init_app(app)
 migrate = Migrate(app, db)
 api = Api(app)
 
-
-
 class BooksResource(Resource):
     def get(self):
         books = Book.query.all()
