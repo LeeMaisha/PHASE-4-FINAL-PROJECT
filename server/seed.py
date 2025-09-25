@@ -67,7 +67,7 @@ with app.app_context():
     book4 = Book(
         title="The Catcher in the Rye",
         author="J.D. Salinger",
-        published_year=date(1951, 1, 1),  # Changed to date object
+        published_year=date(1951, 1, 1),  
         genre_id=1,
         description="A story about teenage rebellion and alienation.",
         last_updated=datetime.now()
