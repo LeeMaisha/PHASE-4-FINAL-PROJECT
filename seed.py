@@ -38,7 +38,7 @@ with app.app_context():
 
     
     book1 = Book(
-        title="Think Big",
+        title="Think Better",
         author="Ben Carson",
         published_year=date(1982, 1, 1),  
         genre_id=3,
